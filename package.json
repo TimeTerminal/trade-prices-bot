@@ -1,0 +1,11 @@
+{
+  "name": "trade-prices-bot",
+  "version": "1.0.0",
+  "description": "A bot that fetches market prices for currencies",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Coinsquare - Vishesh Thanki",
+  "license": "MIT"
+}
