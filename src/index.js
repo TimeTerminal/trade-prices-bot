@@ -1,6 +1,7 @@
 const Slackbot = require("slackbots");
 const axios = require("axios");
 const config = require("config");
+const _ = require("lodash");
 
 const bot = new Slackbot({
   token: "xoxb-4886555281-406059636004-9D2cKYQOGDnU9pZpz4teVdmJ",
@@ -12,11 +13,6 @@ bot.on("start", () => {
   const params = {
     icon_emoji: ":btc:"
   };
-
-  var url = config.get("apiUrl");
-
-  // bot.postMessageToChannel("trade-bot", "My purpose is to give prices", params);
-  console.log(url, "config");
 });
 
 // Error Handling
@@ -33,18 +29,36 @@ bot.on("message", data => {
 
 // Respond to user
 function handleMessage(message) {
-  if (message.toLowercase().includes(" 24 hour")) {
+  if (message.includes(" 24 hour")) {
     sendMessage(true);
-  } else if (
-    message.toLowercase().includes(" btc") ||
-    message.toLowercase().includes(" bitcoin")
-  ) {
+  } else if (message.includes(" btc") || message.includes(" bitcoin")) {
     sendMessage(false);
   }
 }
 
 // Actually send the message
 function sendMessage(isTwentyFourHour) {
-  // axios.get()
-  console.log("is it true or false", isTwentyFourHour);
+  const url = config.get("apiUrl");
+  const ticker = "BTC";
+  const base = "CAD";
+
+  axios.get(url).then(res => {
+    const selectedCurrency = _.find(res.data.quotes, {
+      ticker: ticker,
+      base: base
+    });
+
+    const ret24 = selectedCurrency.ret24 * 100;
+    const lastPrice = selectedCurrency.last / 100;
+
+    let message;
+
+    isTwentyFourHour ? (message = ret24) : (message = lastPrice);
+
+    const params = {
+      icon_emoji: ":btc:"
+    };
+
+    bot.postMessageToChannel("trade-bot", message, params);
+  });
 }
