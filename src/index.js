@@ -33,6 +33,8 @@ function handleMessage(message) {
     sendMessage(true);
   } else if (message.includes(" btc") || message.includes(" bitcoin")) {
     sendMessage(false);
+  } else if (message.length === 0) {
+    sendMessage(false);
   }
 }
 
@@ -48,12 +50,13 @@ function sendMessage(isTwentyFourHour) {
       base: base
     });
 
-    const ret24 = selectedCurrency.ret24 * 100;
+    const ret24 = (selectedCurrency.ret24 * 100).toString();
+    const ret24Formatted = `${ret24.substring(0, 5)}%`;
     const lastPrice = selectedCurrency.last / 100;
 
     let message;
 
-    isTwentyFourHour ? (message = ret24) : (message = lastPrice);
+    isTwentyFourHour ? (message = ret24Formatted) : (message = lastPrice);
 
     const params = {
       icon_emoji: ":btc:"
